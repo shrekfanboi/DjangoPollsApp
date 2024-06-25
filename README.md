@@ -37,6 +37,16 @@ python manage.py runserver
 12. Leave the group
 13. Edit or Delete the group
 
+### Email Notifications
+
+To receive email notifications, run the following:
+
+```bash
+cd smtp
+python server.py
+```
+
+
 ## Contributing
 
 Contributions are welcome! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
