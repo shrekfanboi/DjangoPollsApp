@@ -1,0 +1,33 @@
+{% load form_tags %}
+<div  class="mb-3" data-comment-id="{{ comment.pk }}">
+    <div class="d-flex flex-start align-items-self-start">
+        <img class="rounded-circle shadow-1-strong me-3"
+          src="{{ comment.author.avatar.url }}" alt="avatar" width="60"
+          height="60" />
+        <div class="flex-column flex-start">
+          <a class="text-primary mb-1 fw-bold text-decoration-none" href="{% url 'polls:user_profile' comment.author.username %}">{{ comment.author.username }}</a>
+          <p class="text-muted small mb-0 text-start">{{ comment.created_at|timesince_approx }} ago</p>
+          <p class="my-1 text-start">{{ comment.content }}</p>
+          <div class="small d-flex justify-content-start">
+            <div class="d-flex align-items-center me-3 text-decoration-none text-muted">
+              {% if request.user and request.user in comment.likes.all %}
+              <i class="fas fa-thumbs-up me-2" onclick="likeComment(event, {{ comment.pk }});"></i>
+              {% else %}
+              <i class="far fa-thumbs-up me-2" onclick="likeComment(event, {{ comment.pk }});"></i>
+              {% endif %}
+              <p class="mb-0" id="likeCount">{{ comment.likes.count }}</p>
+            </div>
+            <div class="d-flex align-items-center me-3 text-decoration-none text-muted">
+              {% if request.user and request.user in comment.dislikes.all %}
+              <i class="fas fa-thumbs-down me-2" onclick="dislikeComment(event, {{ comment.pk }});"></i>
+              {% else %}
+              <i class="far fa-thumbs-down me-2" onclick="dislikeComment(event, {{ comment.pk }});"></i>
+              {% endif %}
+              <p class="mb-0" id="dislikeCount">{{ comment.dislikes.count }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+      
+</div>

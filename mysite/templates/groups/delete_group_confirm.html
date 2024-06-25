@@ -1,0 +1,20 @@
+<div class="modal fade" id="deleteGroupConfirmationModal" tabindex="-1" aria-labelledby="deleteGroupConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="exampleModalLabel">Confirm Delete?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-0">
+            <span>Are you sure you want to delete {{ group.name }}?</span>
+            <form method="post" action="{% url 'groups:delete_group' group.slug %}">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-block mt-3">
+                    <button type="submit" class="btn btn-outline-danger">Yes, I confirm</button>
+                    <button type="button" class="btn btn-success mx-2" data-bs-dismiss="modal">No, take me back</button>
+                </div>
+            </form>
+        </div>        
+      </div>
+    </div>
+  </div>

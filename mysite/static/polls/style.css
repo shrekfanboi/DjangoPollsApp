@@ -1,0 +1,58 @@
+.title {
+    background-color: black; 
+    border-radius: 10px; 
+    color: white; 
+    padding: 5px; 
+    text-align: center;
+    margin-top: 10px;
+}
+
+p {
+    text-align: center;
+}
+
+#avatar::-webkit-file-upload-button{
+    visibility: hidden;
+}
+#avatar::file-selector-button {
+    display: none;
+}
+
+label[for=avatar]:hover{
+    cursor: pointer;
+    background-color: #6c757d;
+    color: white;
+} 
+
+#deleteConfirmationModal {
+    overflow-y:scroll;
+}
+#blog:hover {
+    cursor: pointer;
+    border-color: #6c757d;
+}
+.fa-thumbs-up:hover {
+    cursor: pointer;
+    color: green;
+}
+.fa-thumbs-down:hover {
+    cursor: pointer;
+    color: red;
+}
+.markdownx-preview {
+    min-height:250px;
+    overflow-y: auto;
+}
+.markdownx-preview p {
+    margin: 0;
+    text-align: left;
+}
+#markdownx-content textarea{
+    min-height: 250px; 
+    max-height: 300px; 
+    overflow-y: auto; 
+    resize: vertical; 
+}
+#blogContentContainer p{
+    text-align: left;
+}

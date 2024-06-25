@@ -1,0 +1,28 @@
+{% extends 'polls/base.html' %}
+{% load static %}
+{% block title %}Polls - Home{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row g-2">
+        <div class="col-lg-6">
+            <img src="{% static 'polls/about-us.jpg' %}" alt="Logo" class="img-fluid rounded h-100" height="100%">
+        </div>
+        <div class="col-lg-6 p-2">
+            <h3 class="text-center">About Us</h3>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                Ipsum, ex quasi neque odit esse iure molestiae vitae, laudantium, 
+                deserunt qui eos laborum. Doloremque exercitation
+                em ut error, placeat magni tempora sunt.
+            </p>
+            <br/>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                Ipsum, ex quasi neque odit esse iure molestiae vitae, laudantium, 
+                deserunt qui eos laborum. Doloremque exercitation
+                em ut error, placeat magni tempora sunt.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

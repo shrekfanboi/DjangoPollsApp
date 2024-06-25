@@ -1,0 +1,56 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg sticky-top bg-body-tertiary bg-primary" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand font-monospace" href="#">Polls</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarScroll">
+        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'polls:index' %}">Home</a>
+          </li>
+          {% if not request.user.is_authenticated or request.user.is_authenticated and request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'polls:about' %}">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'polls:help' %}">Help</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav nav navbar-right">
+          {% if request.user.is_authenticated %}
+          <li class="nav-item mx-3">
+            <a class="nav-link px-3 btn btn-secondary rounded-pill text-white" href="{% url 'polls:create_blog' %}">
+              <i class="fa fa-plus"></i>&nbsp Create 
+            </a>
+          </li>
+            <li class="nav-item dropdown m-auto">
+              <div class="position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{{ request.user.avatar.url }}" class="rounded-circle" width="30" height="30" alt="Avatar">
+                <span class="rounded-circle position-absolute" style="width: 10px; height: 10px; bottom: 1%;right: 1%;background-color: #99CC00;"></span>
+              </div>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="{% url 'polls:user_profile' username=request.user.username %}">Profile</a></li>
+                  <li><a class="dropdown-item" href="#">Settings</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'polls:logout' %}">Logout</a></li>
+                </ul>
+              </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="btn btn-primary rounded text-light px-3" href="{% url 'polls:login' %}">Log in</a>
+            </li>
+            <li class="nav-item mx-2">
+              <a href="{% url 'polls:register' %}" class="btn btn-outline-success px-2">Sign up</a>
+            </li>
+            {% endif %}
+              
+        </ul>
+      </div>
+    </div>
+  </nav>

@@ -1,0 +1,102 @@
+{% extends 'polls/base.html' %}
+{% load form_tags %}
+{% block title %}Polls - Profile{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row m-5">
+        <div class="col-sm-8 m-auto">
+            <div class="d-flex justify-content-start align-items-center">        
+                <img src="{{ user.avatar.url }}" class="rounded-circle" width="50" height="50" alt="Avatar" id="preview">
+                <div class="mx-2">
+                    <span class="fw-bold">{{ user.username }}</span>
+                </div>
+            </div>
+            <br/>
+            <form method="post" id="editProfileForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group row p-1">
+                    <label for="{{ form.first_name.id_for_label }}" class="col-sm-4 col-form-label">{{ form.first_name.label }}</label>
+                    <div class="col-sm-8">
+                        {% if form.first_name.errors %}
+                        {{ form.first_name|add_class:"is-invalid" }}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.first_name.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.first_name }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group row p-1">
+                    <label for="{{ form.last_name.id_for_label }}" class="col-sm-4 col-form-label">{{ form.last_name.label }}</label>
+                    <div class="col-sm-8">
+                        {% if form.last_name.errors %}
+                        {{ form.last_name|add_class:"is-invalid" }}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.last_name.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.last_name }}
+                        {% endif %}                    
+                    </div>
+                </div>
+                <div class="form-group row p-1">
+                    <label for="{{ form.email.id_for_label }}" class="col-sm-4 col-form-label">{{ form.email.label }}</label>
+                    <div class="col-sm-8">
+                        {% if form.email.errors %}
+                        {{ form.email|add_class:"is-invalid" }}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.email.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.email }}
+                        {% endif %}                       
+                    </div>
+                </div>
+                <div class="form-group row p-1">
+                    <label for="{{ form.username.id_for_label }}" class="col-sm-4 col-form-label">{{ form.username.label }}</label>
+                    <div class="col-sm-8">
+                        {% if form.username.errors %}
+                        {{ form.username|add_class:"is-invalid" }}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.username.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.username }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group row p-1">
+                    <span class="col-sm-4 col-form-label">Change Avatar</span>
+                    <div class="col-sm-8 d-flex justify-content-start">
+                        <label for="{{ form.avatar.id_for_label }}" class="col-sm-4 col-form-label btn btn-outline-secondary rounded w-25">Change</label>
+                        {{ form.avatar|add_class:"invisible w-0" }}
+                    </div>
+                </div>
+                <div class="form-group row p-1">
+                    <span class="col-sm-4 col-form-label">Change Password</span>
+                    <div class="col-sm-8">
+                        <a class="btn btn-outline-secondary rounded w-25" href="{% url 'polls:change_password' %}">Change</a>
+                    </div>
+                </div>
+            </form>
+            <div class="d-grid gap-2 d-md-block py-3">
+                <button type="submit" class="btn btn-outline-primary" id="editProfileSubmitBtn" disabled>Save Changes</button>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" href="{% url 'polls:delete_user' %}">Delete Account</button>
+
+            </div>
+
+        </div>
+        
+    </div>
+    {% include 'polls/delete_user_confirm.html' %}
+</div>
+{% endblock %}

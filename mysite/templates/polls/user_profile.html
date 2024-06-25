@@ -1,0 +1,185 @@
+{% extends 'polls/base.html' %}
+{% load form_tags %}
+{% block title %}Polls - Profile{% endblock %}
+{% block content %}
+<div class="container-fluid mt-5">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-lg-6 d-flex justify-content-md-end">
+            <img src="{{ user.avatar.url }}" class="img-thumbnail img-fluid rounded" width="100" height="100" alt="Avatar">
+        </div>
+        <div class="col-lg-6 my-auto ">
+            <div class="d-flex flex-column justify-content-start">
+                <h3 class="text-start m-0">{{ user.username }}</h3>
+                <span class="text-muted">{{ user.email }}</span>
+            </div>
+            <div class="d-flex justify-content-start align-items-center mt-2">
+                {% if request.user.is_authenticated %}
+                    {% if request.user == user%}
+                        <a class="btn btn-outline-secondary rounded-pill px-3" 
+                        href="{% url 'polls:edit_profile' %}">Edit Profile</a>
+                    {% else %}
+                        {% if request.user in user.followers.all %}
+                        <button class="btn btn-primary rounded-pill px-3" id="unfollowBtn"
+                        onclick="handleFollowUnfollowUser(event, {{ user.pk }});">
+                        Unfollow
+                        </button>
+                        {% else %}
+                        <button class="btn btn-outline-primary rounded-pill px-3" id="followBtn"
+                        onclick="handleFollowUnfollowUser(event, {{ user.pk }});">
+                        Follow
+                        </button>
+                        {% endif %}
+                    {% endif %}
+                {% else %} 
+                <button class="btn btn-primary rounded-pill px-3" id="unfollowBtn" disabled>
+                Follow
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-5">
+        <div class="col-sm-8 m-auto">
+            <ul class="nav nav-underline container-fluid" id="profileTab" role="tablist">
+                <li class="nav-item col" role="presentation">
+                  <a class="nav-link active text-center" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" role="tab" aria-controls="info-tab-pane" aria-selected="true">Profile</a>
+                </li>
+                <li class="nav-item col" role="presentation">
+                  <a class="nav-link text-center" id="followedby-tab" data-bs-toggle="tab" data-bs-target="#followedby-pane" role="tab" aria-controls="followedby-tab-pane" aria-selected="false">
+                    Followed By ({{ user.followers.count }})
+                </a>
+                </li>
+                <li class="nav-item col" role="presentation">
+                  <a class="nav-link text-center" id="following-tab" data-bs-toggle="tab" data-bs-target="#following-pane" role="tab" aria-controls="following-tab-pane" aria-selected="false">
+                    Following ({{ user.following.count }})
+                </a>
+                </li>
+                <li class="nav-item col" role="presentation">
+                  <a class="nav-link text-center" id="posted-tab" data-bs-toggle="tab" data-bs-target="#posted-pane" role="tab" aria-controls="posted-tab-pane" aria-selected="false">
+                    Posts ({{ user.authored_blogs.count }})
+                </a>
+                </li>
+                <li class="nav-item col" role="presentation">
+                  <a class="nav-link text-center" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups-pane" role="tab" aria-controls="groups-tab-pane" aria-selected="false">
+                    Groups ({{ user.joined_groups.count }})
+                </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-sm-8 m-auto">
+        <div class="tab-content" id="profileTabContent">
+            <div class="tab-pane fade show active" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
+                <div class="container-fluid m-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span class="fw-bold">Name</span>
+                                    <span class="text-muted">{{ user.first_name }} {{ user.last_name }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span class="fw-bold">Email</span>
+                                    <span class="text-muted">{{ user.email }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span class="fw-bold">Username</span>
+                                    <span class="text-muted">{{ user.username }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span class="fw-bold">Date Joined</span>
+                                    <span class="text-muted">{{ user.date_joined|date }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+            </div>
+            </div>
+            <div class="tab-pane fade" id="followedby-pane" role="tabpanel" aria-labelledby="followedby-tab">
+                <div class="container-fluid">
+                    <div class="col mx-5">
+                        <ul class="list-group list-group-flush">
+                            {% for followed in user.followers.all %}
+                                <li class="list-group-item border-0 my-3">
+                                   <div class="d-flex align-items-center">
+                                       <img src="{{ followed.avatar.url }}" class="img-thumbnail img-fluid rounded-circle" width="70" height="70" alt="Avatar">
+                                       <div class="flex-column flex-start ms-3">
+                                           <a class="mb-0 text-start fw-bold text-decoration-none" href="{% url 'polls:user_profile' followed.username %}">{{ followed.username }}</a>
+                                           <br/>
+                                           <span class="text-muted fs-6">Active {{ followed.last_login|timesince_approx }} ago</span>
+                                       </div>
+                                   </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>    
+                </div>
+            </div>
+            <div class="tab-pane fade" id="following-pane" role="tabpanel" aria-labelledby="following-tab">
+                <div class="container-fluid">
+                    <div class="col mx-5">
+                        <ul class="list-group list-group-flush mb-5">
+                            {% for following in user.following.all %}
+                                <li class="list-group-item border-0 my-3">
+                                   <div class="d-flex align-items-center">
+                                       <img src="{{ following.avatar.url }}" class="img-thumbnail img-fluid rounded-circle" width="70" height="70" alt="Avatar">
+                                       <div class="flex-column flex-start ms-3">
+                                           <a class="mb-0 text-start fw-bold text-decoration-none" href="{% url 'polls:user_profile' following.username %}">{{ following.username }}</a>
+                                           <br/>
+                                           <span class="text-muted fs-6">Active {{ following.last_login|timesince_approx }} ago</span>
+                                       </div>
+                                   </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="tab-pane fade" id="posted-pane" role="tabpanel" aria-labelledby="posted-tab">
+                <div class="container-fluid m-auto">
+                    <ul class="list-group">
+                        {% for blog in user.authored_blogs.all %}    
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div class="col-6 overflow-hidden text-truncate">
+                                <a href="{% url 'polls:blog_detail' blog.pk %}" class="text-decoration-none text-black">{{ blog.title }}</a>
+                            </div>
+                            <div class="my-auto">
+                                <span class="fw-bold">{{ blog.views.count }}</span> views
+                                <span class="fw-bold ms-3">{{ blog.likes.count }}</span> likes
+                                <span class="fw-bold ms-3">{{ blog.dislikes.count }}</span> dislikes
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul> 
+                </div>
+            </div>
+            <div class="tab-pane fade" id="groups-pane" role="tabpanel" aria-labelledby="groups-tab">
+                <div class="container-fluid">
+                    <div class="col mx-5">
+                        <ul class="list-group list-group-flush">
+                            {% for group in user.joined_groups.all %}
+                                <li class="list-group-item border-0 my-3">
+                                   <div class="d-flex align-items-center">
+                                       <img src="{{ group.profile.url }}" class="img-thumbnail img-fluid rounded-circle" width="70" height="70" alt="Avatar">
+                                       <div class="flex-column flex-start ms-3">
+                                           <a class="mb-0 text-start text-decoration-none" href="{% url 'groups:group_detail' group.slug %}">{{ group.name }}</a>
+                                           <br/>
+                                           <span class="text-muted fs-6" style="font-size: smaller;">{{ group.members.count }} members</span>
+                                       </div>
+                                   </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>    
+                </div>
+        </div>   
+        </div>
+    </div>
+       
+</div>
+
+{% endblock %}

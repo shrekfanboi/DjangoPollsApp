@@ -1,0 +1,133 @@
+{% extends 'polls/base.html' %}
+{% load static %}
+{% block title %}Polls - {{ group.name }}{% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="container-fluid mt-1">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-8 m-auto position-relative">
+            <img src="{% static 'groups/default-banner.jpg' %}" class="img-fluid w-100 rounded" alt="Avatar">
+            <div class="position-absolute top-100 start-20 translate-middle-y px-3 d-flex align-items-baseline">
+                <img src="{{ group.profile.url }}" class="img-fluid rounded-circle img-thumbnail" alt="Avatar" width="100" height="150">
+                <h3 class="fw-bolder">{{ group.name }}</h3>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="row justify-content-end">
+        <div class="col-md-6 d-flex gap-2 me-5 mt-3 justify-content-center">
+            <a class="btn btn-outline-dark rounded-pill" href="{% url 'polls:create_blog' %}?group={{ group.slug|urlencode }}">
+            <i class="fa fa-plus"></i> Create a Post
+            </a>
+
+            {% if request.user not in group.members.all %}
+            <a class="btn btn-primary rounded-pill" href="{% url 'groups:join_group' group.slug %}">Join</a>
+            {% else %}
+            <a class="btn btn-outline-secondary rounded-pill" href="{% url 'groups:leave_group' group.slug %}">Joined</a>
+            {% endif %}
+            {% if request.user in group.members.all %}
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary rounded-circle" data-bs-toggle="dropdown" type="button" aria-expanded="false">
+                    <i class="fa fa-ellipsis-h"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-item">
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#createGroupModal">Edit</a>
+                    </li>
+                    <li class="dropdown-item">
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#deleteGroupConfirmationModal">Delete</a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-5 mb-3 justify-content-between offset-md-2">
+
+        <div class="col-sm-8 d-flex align-items-end">
+            <p class="text-muted text-start m-0 word-break">
+                {{ group.description|safe|truncatechars:200 }}
+            </p>
+        </div>
+        <div class="col-sm-4 m-auto">
+            <div class="d-flex justify-content-start align-items-center">
+                <div class="col-2 text-center">
+                    <h5 class="fw-bolder m-0">{{ group.members.count }}</h5>
+                    <span class="text-muted" style="font-size: smaller;">Users</span>
+                </div>
+                <div class="col-2 text-center">
+                    <h5 class="fw-bolder m-0">{{ group.blogs.count }}</h5>
+                    <span class="text-muted" style="font-size: smaller;">Posts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <hr/>
+        </div>
+    </div>
+    {% if group.blogs.count == 0 %}
+    <div class="row justify-content-center mb-5">
+        <div class="col-8">
+            <p class="text-center text-muted">No posts yet</p>
+        </div>
+    </div>
+    
+    {% else %}
+    {% for blog in group.blogs.all %}
+
+    <div class="row mb-3" data-blog-id="{{ blog.pk }}" id="blogContainer">
+        <div class="col-md-8 m-auto">
+            <div class="card border-0" id="blog">
+                <div>
+                    <img src="{{ blog.author.avatar.url }}" class="rounded-circle mr-2" alt="User Profile" width="50" height="50">
+                    <span class="fw-medium">{{ blog.author.username }}</span>
+                    <small class="text-muted">
+                        <a class="text-decoration-none" href="{% url 'polls:user_profile' username=blog.author.username %}">@{{ blog.author.username }}</a>
+                        -
+                        {{ blog.created_at|date:"M d" }}
+                    </small>
+                </div>
+                <div class="card-body px-0">
+                    <p class="card-text text-start">
+                        {{ blog.title }}
+                        <a class="text-decoration-none" href="{% url 'polls:blog_detail' pk=blog.pk %}">READ MORE</a>
+                    </p> 
+                </div>
+                <div class="card-footer px-0 border-0 d-flex justify-content-start bg-white">
+                    <div class="d-flex gap-4 text-muted">
+                            <div>
+                                {% if request.user and request.user in blog.likes.all %}
+                                <i class="fas fa-thumbs-up" onclick="likeBlog(event, {{ blog.pk }});"></i> 
+                                {% else %}
+                                <i class="far fa-thumbs-up" onclick="likeBlog(event, {{ blog.pk }});"></i>
+                                {% endif %}
+                                <span id="likeCount">{{ blog.likes.count }}</span>
+                            </div>
+                            <div>
+                                {% if request.user and request.user in blog.dislikes.all %}
+                                <i class="fas fa-thumbs-down" onclick="dislikeBlog(event, {{ blog.pk }});"></i>
+                                {% else %}
+                                <i class="far fa-thumbs-down" onclick="dislikeBlog(event, {{ blog.pk }});"></i>
+                                {% endif %}
+                                <span id="dislikeCount">{{ blog.dislikes.count }}</span>
+                            </div>
+                            <div>
+                                <i class="fas fa-eye"></i> <span>{{ blog.views.count }}</span>
+                            </div>
+                    </div>  
+                </div>
+            </div>    
+            <hr/>        
+        </div>
+    </div>
+   {% endfor %}
+{% endif %}
+{% include 'groups/create_group_modal.html' %}
+{% include 'groups/delete_group_confirm.html'%}
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'polls/base.html' %}
+{% load form_tags %}
+{% block title %}Polls - Blog{% endblock %}
+{% block content %}
+
+<div class="container mt-5" id="blogContainer" data-blog-id="{{ blog.pk }}">
+    <div class="row">
+        <h2 class>{{ blog.title }}</h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-3 text-muted">
+            <p>
+                Posted By 
+                <a class="text-decoration-none" 
+                href="{% url 'polls:user_profile' username=blog.author.username %}">
+                @{{ blog.author.username }}
+                </a> 
+                on {{ blog.created_at|date:"d M, Y" }}
+                <i class="fa fa-xs fa-circle"></i>
+                <span> {{ blog.views.count }} views </span>
+            </p>
+                
+                
+
+            </div>
+            <div class="d-flex gap-3 text-muted">
+                {% if request.user.is_authenticated and request.user == blog.author %}
+                <a role="button" class="btn btn-primary btn-sm px-3" href="{% url 'polls:edit_blog' blog.pk %}">Edit</a>
+                <button class="btn btn-outline-danger btn-sm px-3" id="deleteBlogBtn">Delete</button>
+                {% endif %}
+
+                <div class="text-success">
+                    {% if request.user.is_authenticated and request.user in blog.likes.all %}
+                    <i class="fas fa-thumbs-up" onclick="likeBlog(event, {{ blog.pk }});"></i> 
+                    <span id="likeCount">{{ blog.likes.count }}</span>
+                    {% else %}
+                    <i class="far fa-thumbs-up" onclick="likeBlog(event, {{ blog.pk }});"></i> 
+                    <span id="likeCount">{{ blog.likes.count }}</span>
+                    {% endif %}
+                </div>
+                <div class="text-danger">
+                    {% if request.user and request.user in blog.dislikes.all %}
+                    <i class="fas fa-thumbs-down" onclick="dislikeBlog(event, {{ blog.pk }});"></i> 
+                    <span id="dislikeCount">{{ blog.dislikes.count }}</span>
+                    {% else %}
+                    <i class="far fa-thumbs-down" onclick="dislikeBlog(event, {{ blog.pk }});"></i> 
+                    <span id="dislikeCount">{{ blog.dislikes.count }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+                
+        <div class="container-fluid my-3" id="blogContentContainer">
+            <p class="text-start">
+                {{ blog.formatted_markdown|safe }}
+            </p>
+        </div>
+
+        <br/>
+
+
+        <div class="d-flex gap-4 text-muted justify-content-center text-muted">
+            
+        </div> 
+        
+
+          
+    </div>
+    <div class="row">
+        <div class="card mt-5 mb-3 p-0 border-0">
+            <div class="card-header my-3 bg-white border-2">
+                <h5 id="commentCount">{{ blog.blog_comments.count }} Comments</h5>
+            </div>
+
+            <div class="form-outline w-100">
+                {% csrf_token %}
+                <textarea class="form-control" id="CommentField" rows="4"
+                    placeholder="Add a comment"></textarea>
+            </div>
+            <div class="d-flex justify-content-end mt-2 pt-1">
+                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" id="postCommentBtn">Post comment</button>                
+            </div>
+            <div class="card-body" id="commentContainer">
+
+                {% for comment in blog.blog_comments.all %}
+                    {% include 'polls/comment.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

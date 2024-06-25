@@ -1,0 +1,52 @@
+{% load form_tags %}
+<div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="createGroupModalLabel">Create Community</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% with form=create_group_form %}
+                <form id="createGroupForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                        {% if form.name.errors %}
+                            <script>
+                                $(document).ready(function() {
+                                    $('#createGroupModal').modal('show');
+                                });
+                            </script>
+                            {{ form.name|add_class:"is-invalid" }}
+                            <div class="invalid-feedback d-block">
+                            {% for error in form.name.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.name }}
+                        {% endif %}
+                    </div>  
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.profile.id_for_label }}" class="form-label">{{ form.profile.label }}</label>
+                        {{ form.profile }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.join_this_group }}
+                        <label for="{{ form.join_this_group.id_for_label }}" class="form-label">{{ form.join_this_group.label }}</label>
+                    </div>
+                </form>
+                {% endwith %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="createGroupForm" class="btn btn-primary">Create Group</button>
+            </div>  
+        </div>
+    </div>
+</div>
